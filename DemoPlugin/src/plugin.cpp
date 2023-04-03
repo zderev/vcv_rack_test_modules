@@ -7,6 +7,8 @@ Plugin* pluginInstance;
 void init(Plugin* p) {
 	pluginInstance = p;
 	p->addModel(modelDemoModule);
+    p->addModel(modelDemoExpRModule);
+
 
 	// Add modules here
 	// p->addModel(modelMyModule);

@@ -27,10 +27,10 @@ struct DemoModule : Module {
         configInput(CV_INPUT, "");
         configOutput(CV_OUTPUT, "");
 	}
-
+    float out;
 	void process(const ProcessArgs& args) override {
 
-        float out = 0.f;
+        out = 0.f;
 
         float freq = params[FREQ_PARAM].getValue();
         float gain = params[CV_PARAM].getValue();
@@ -45,7 +45,7 @@ struct DemoModule : Module {
 
 struct DemoModuleWidget : ModuleWidget {
 	DemoModuleWidget(DemoModule* module) {
-//        this->module = module;
+        this->module = dynamic_cast<DemoModule*>(this->module);;
 		setModule(module);
 		setPanel(createPanel(asset::plugin(pluginInstance, "res/DemoModule.svg")));
 
@@ -66,3 +66,61 @@ struct DemoModuleWidget : ModuleWidget {
 
 
 Model* modelDemoModule = createModel<DemoModule, DemoModuleWidget>("DemoModule");
+
+/**************************************************/
+// EXPANDER CODE - starting here
+/**************************************************/
+
+#include "plugin.hpp"
+struct DemoExpRModule : Module {
+
+    enum ParamId  {PARAMS_LEN};
+    enum InputId  {INPUTS_LEN};
+    enum OutputId {CV_OUTPUT,OUTPUTS_LEN};
+    enum LightId  {LIGHTS_LEN};
+
+    DemoExpRModule() {
+        config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+        configOutput(CV_OUTPUT, "CV Output");
+    }
+
+    DemoModule* findHostModulePtr(Module* module) {
+        if (module) {
+            if (module->leftExpander.module) {
+                // if it's the mother module, we're done
+                if (module->leftExpander.module->model == modelDemoModule) {
+                    return reinterpret_cast<DemoModule*>(module->leftExpander.module);
+                }
+                else if (module->leftExpander.module->model == modelDemoExpRModule) {
+                    return findHostModulePtr(module->leftExpander.module);
+                }
+            }
+        }
+        return nullptr;
+    }
+
+    void process(const ProcessArgs& args) override {
+        DemoModule const* mother = findHostModulePtr(this);
+        float cvOut = 0.f;
+        if (mother) {
+            cvOut += mother->out;
+        }
+        outputs[CV_OUTPUT].setVoltage(cvOut);
+    }
+};
+
+struct DemoExpRModuleWidget : ModuleWidget {
+
+    DemoExpRModule* module;
+    DemoExpRModuleWidget(DemoExpRModule* module) {
+
+        this->module = module;
+        setModule(module);
+        setPanel(createPanel(asset::plugin(pluginInstance, "res/DemoModuleExpr.svg")));
+
+        addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(5.08, 30.48)), module, DemoExpRModule::CV_OUTPUT));
+    }
+
+};
+
+Model* modelDemoExpRModule = createModel<DemoExpRModule, DemoExpRModuleWidget>("DemoExpRModule");

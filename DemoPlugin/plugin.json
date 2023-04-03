@@ -18,6 +18,12 @@
       "name": "DemoModule",
       "description": "",
       "tags": []
+    },
+    {
+      "slug": "DemoExpRModule",
+      "name": "DemoExpRModule",
+      "description": "",
+      "tags": []
     }
   ]
 }
