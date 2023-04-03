@@ -1,0 +1,23 @@
+{
+  "slug": "DemoPlugin",
+  "name": "DemoPlugin",
+  "version": "2.0.0",
+  "license": "proprietary",
+  "brand": "DemoPlugin",
+  "author": "",
+  "authorEmail": "",
+  "authorUrl": "",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "DemoModule",
+      "name": "DemoModule",
+      "description": "",
+      "tags": []
+    }
+  ]
+}
