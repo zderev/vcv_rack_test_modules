@@ -5,3 +5,5 @@
 /*.dll
 .DS_Store
 /src/.idea/
+../src/.idea/
+/dep/
